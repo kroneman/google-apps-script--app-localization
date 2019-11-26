@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "outDir": "./build",
+    "baseUrl": ".",
+    "noImplicitAny": true,
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "noImplicitThis": true,
+    "noEmitOnError": true,
+    "target": "ES5",
+    "esModuleInterop": true,
+    "lib": ["dom", "es6", "scripthost", "es2017"]
+  },
+  "include": ["src/**/*"]
+}

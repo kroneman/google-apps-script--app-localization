@@ -1,0 +1,26 @@
+{
+  "name": "google-script-translation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack",
+    "sync": "npm run build && cd build/ && clasp push"
+  },
+  "author": "Lennart Kroneman",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/google-apps-script": "0.0.48",
+    "copy-webpack-plugin": "^5.0.3",
+    "gas-webpack-plugin": "^1.0.2",
+    "ts-loader": "^6.0.0",
+    "typescript": "^3.4.5",
+    "webpack": "^4.31.0",
+    "webpack-cli": "^3.3.2"
+  },
+  "dependencies": {
+    "axios": "^0.19.0",
+    "dotenv": "^8.2.0",
+    "fs-extra": "^8.1.0"
+  }
+}

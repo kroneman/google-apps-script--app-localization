@@ -1,0 +1,5 @@
+node_modules
+.env
+build
+.clasp.json
+package-lock.json
