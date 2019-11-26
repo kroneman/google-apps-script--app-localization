@@ -56,7 +56,7 @@ clasp login
 
 You should see a bunch of webpack output
 
-![Deploy output](../assets/deploy-output.jpg)
+![Deploy output](../assets/7-deploy-output.jpg)
 
   - 3.5 In the menu go to `Publish -> Deploy as WebApp`
 
@@ -70,7 +70,7 @@ You should see a bunch of webpack output
 
 ![app url](../assets/10-app-url.jpg)
 
-  - *3.10 Copy the Url and keep it handy*
+  - *3.10 Copy the Url and keep it handy*, to test if its up open the lint in another browser and you should see a json response
 
   - 3.11 If you run into permissions select the testPermissions funciton in the dropdown below the menu and run it
 
@@ -78,4 +78,4 @@ You should see a bunch of webpack output
 
   - 3.12 You'll need to publish every once in a while, in the Publish Dialog there is also a place with the link to always test your latest code
 
-![Versions and permissions](../assets/9-version-and-permissions.jpg)
+![Versions and permissions](../assets/12-latest-code-link.jpg)
