@@ -25,6 +25,11 @@ Further using a couple tools we can manage the code in a git repository
 - `gas-webpack-plugin` for helping it work in google apps script context
 
 For setup and code see [./google-script](./google-script) directory and documentation
+If you're interested in other things possible with google-apps-script check out:
+- the github topic https://github.com/topics/google-apps-script
+- the documentation https://developers.google.com/apps-script/
+
+Needless to say i've become a fan
 
 ## 2. After deploying and following the guide from step 1 we should have an api
 
