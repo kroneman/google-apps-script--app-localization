@@ -11,6 +11,18 @@ const { TRANSLATION_URL } = process.env;
 const INPUT_FILE = path.join(__dirname, './localization-files/default.json');
 const OUTPUT_FILE = path.join(__dirname, './localization-files/output.json');
 
+if (!TRANSLATION_URL) {
+  console.error(
+    `
+      Aborting:
+      have you deployed the google apps script in ./google-script and placed
+      TRANSLATION_URL in the .env file at ${path.join(__dirname, '../.env')}
+      It should look something like 'https://script.google.com/macros/s/89asdCKALA_a-really-long-hash/exec'
+    `
+  );
+  return;
+}
+
 const Cache = require('./cache');
 const cache = new Cache();
 
