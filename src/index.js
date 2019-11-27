@@ -72,6 +72,7 @@ async function translate({ text, key, fingerPrint }) {
   const translation = await translateApi(text);
   console.log(`translation from api: ${translation}`);
   cache.save(fingerPrint, key, translation);
+  return translation;
 }
 
 /**
