@@ -1,6 +1,6 @@
 # Translation api endpoint
 
-This google script create a simple POC endpoint using google apps script using your google drive account
+This google script creates an api endpoint to translate text.
 
 ## Getting set up
 
