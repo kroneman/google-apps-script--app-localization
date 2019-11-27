@@ -1,8 +1,8 @@
-// Load TRANSLATION_URL from env
 const path = require('path');
 const axios = require('axios');
 const fse = require('fs-extra');
 
+// Load TRANSLATION_URL from env
 require('dotenv').config({
   path: path.join(__dirname, '../.env')
 });
@@ -11,26 +11,62 @@ const { TRANSLATION_URL } = process.env;
 const INPUT_FILE = path.join(__dirname, './localization-files/default.json');
 const OUTPUT_FILE = path.join(__dirname, './localization-files/output.json');
 
+const Cache = require('./cache');
+const cache = new Cache();
+
 /**
  * So this works, however, if you exeed the rate or daily api call limit you run into an issue
  */
 translateLocalizationFile();
 
+/**
+ * Main execution
+ * Reads the input, translates it and saves it
+ */
 async function translateLocalizationFile() {
   const inputFileJSON = await fse.readJSON(INPUT_FILE);
-  const entries = Object.entries(inputFileJSON);
   const translatedJSON = {};
+
+  await cache.loadFromFile();
+  const entries = Object.entries(inputFileJSON);
+  
   for (const [key, value] of entries) {
-    const translatedValue = await googleTranslate(value);
+    const fingerPrint = cache.fingerPrint(`${key}:${value}`);
+    const translatedValue = await translate({ fingerPrint, key, text: value });
     if (translatedValue) {
       translatedJSON[key] = translatedValue;
     }
   }
 
   await fse.writeJSON(OUTPUT_FILE, translatedJSON);
+  await cache.saveToFile();
 }
 
-async function googleTranslate(text) {
+/**
+ * Checks if value has been processed before
+ * - if it found it in cache doesn't process again
+ * - this way api requests are saved
+ * @param {*} param0
+ */
+async function translate({ text, key, fingerPrint }) {
+  console.log(`translate: ${text}`);
+  const isInMemory = cache.has(fingerPrint, key);
+  if(isInMemory) {
+    const valueInMemory = cache.get(fingerPrint, key);
+    console.log(`translation from memory: ${valueInMemory}`);
+    return valueInMemory;
+  }
+
+  const translation = await translateApi(text);
+  console.log(`translation from api: ${translation}`);
+  cache.save(fingerPrint, key, translation);
+}
+
+/**
+ * Calls the endpoint api to translate
+ * @param {string} text 
+ */
+async function translateApi(text) {
   try {
     const response = await axios.get(`${TRANSLATION_URL}?text=${encodeURIComponent(text)}`)
     const { data } = response;
@@ -47,6 +83,9 @@ async function googleTranslate(text) {
     return decodedOutput;
   } catch (e) {
     console.error(e);
+    // if error is thrown in api request for rate limit or another error
+    // save progress and exit
+    await cache.saveToFile();
     process.exit(1);
   }
 }

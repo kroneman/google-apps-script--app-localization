@@ -5,3 +5,4 @@ build
 package-lock.json
 .vscode
 src/localization-files/output.json
+.cache.json

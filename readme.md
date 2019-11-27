@@ -5,7 +5,11 @@ One of the standards i've come across in app development is i18n files for react
 - [vue-i18n](https://kazupon.github.io/vue-i18n/)
 - [react-i18n-and-i18next](https://react.i18next.com/)
 
-While these work great and the react version even has a service offering, sometimes its nice to just use google drive (with some of their services)
+While these work great and they have their own tools for collaboration, sometimes its nice to just use google drive (with some of their services)
+
+*The goal is to take a i18n json file usable by react or vue and translate it via google translation api.*
+
+- where the solution could also partially be applied to xml files or other data storage formats
 
 ## 1. Google translation Api
 
@@ -31,17 +35,27 @@ If you're interested in other things possible with google-apps-script check out:
 
 Needless to say i've become a fan
 
-## 2. After deploying and following the guide from step 1 we should have an api
+## 2. After deploying and following the guide from step 1 we should have an api endpoint
 
 Here is the first limitation of this project. The api endpoint needs to be open for a script to call it.
 I've spent a long time looking to google jwt tokens, cloud console etc to figure out if its possible to use a token for authentication
 
-  - 2.1 You'll notice a [./env.sample](./env.sample) file in the root. Like the clasp configuration in part one. Copy and Rename it to `.env` in the same directory.
-  - 2.2 It'll have one env variable for the moment `TRANSLATION_URL`. In the git ignored `.env` file paste the resulting url from the deployed google-script after the `=`.
-  - 2.3 In src run `npm i` - only a few packages this time...
+  - 2.1 You'll notice a [./env.sample](./env.sample) file in the root.
+
+Like the clasp configuration in part one. Copy and Rename it to `.env` in the same directory.
+
+  - 2.2 It'll have a env variable for the moment `TRANSLATION_URL`.
+
+In the git ignored `.env` file paste the resulting url from the deployed google-script after the `=`.
+
+  - 2.3 In src run `npm i` - if you haven't already
   - 2.4 and run `./src/index.js` using node
   
 The script will take `./src/localization-files/default.json` and translate it to indonesian and place it in `./src/localization-files/default.json`
+
+If you want to change the language text is translated into open [code.ts](./google-script/src/code.ts)
+- update `LanguageApp.translate(input, 'en', 'id');` replacing `id` with the language key of your choice
+- [language keys](https://cloud.google.com/translate/docs/languages)
 
 ## 3. Limitations / Considerations
 
@@ -50,6 +64,9 @@ The script will take `./src/localization-files/default.json` and translate it to
 Google apps has a rate limit and a daily limit for number of api calls / Localization app calls, the limit is quite generous but can be hit. I think its somewhere around *10,000* calls.
 
 [https://developers.google.com/apps-script/guides/services/quotas](https://developers.google.com/apps-script/guides/services/quotas)
+
+See implementation of cache which partially addresses this limitation using fingerprinting and a local cache file
+- [cache.js](./src/cache.js)
 
 2. Writing the whole script in google apps script
 
@@ -67,29 +84,7 @@ They can't protect you from your own mistakes though.
 
 ## 4. Improvements
 
-1. Fingerprinting and saving a local memory file
-
-So when i did this, i ran into the rate limit multiple times
-What i ended up doing was using the built in node `crypto` module and hashing the full input
-
-Something like
-```js
-const fingerPrint = (key, value) => {
-  const dataString = `${key}${value}`;
-  const hash = crypto.createHmac('sha256', this.fingerPrintKey)
-          .update(dataString)
-          .digest('hex');
-  return hash;
-}
-```
-
-- Where `dataString` is the combination of key and value.
-- I would keep this in memory as the program ran. And save api request results to the object using the hash as the key to store them in
-- If a `SIGINT` was detected I would save the object into a `memory.json` file.
-- Further when the program started up I would load the memory object and use the cached translation results if the fingerprint matched and was found in memory
-
-2. Combining this program with google sheets
+1. Combining this program with google sheets
 
 - Google apps script has an api to interact with / create etc with google sheets as well
 - As a developer you want to avoid small tickets like change `color` to `colour` or vice versa.
-
